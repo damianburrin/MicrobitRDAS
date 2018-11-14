@@ -94,14 +94,7 @@ class BMP280():
 
 	# Calculating absolute altitude
 	def	getAltitude(self,GL):
-		return (44330*(1-(self.getPress()/GL)**(1/5.255)))
-        
- 	# get Pressure in Pa for ground level
-	def SLP(self):
-		self.get()
-		return self.P
-
-        
+		return (44330*(1-(self.getPress()/GL)**(1/5.255)))       
 
 	# sleep mode
 	def poweroff(self):
@@ -141,12 +134,12 @@ bmp280 = BMP280()
 #open UART
 uart.init(baudrate=9600, bits=8, parity=None, stop=1,tx=pin0,rx=pin1)
 #get start time
-now =time.ticks_ms()
+now = ticks_ms()
 #get Ground Level Pressure
 GL=bmp280.getPress()
 while True:
     #log data
-    timer= round( ((time.ticks_ms()-now)/1000),2)
+    timer= round( ((ticks_ms()-now)/1000),2)
     uart.write(str(timer))
     uart.write(",")
     uart.write(str(accelerometer.get_x()))#x
