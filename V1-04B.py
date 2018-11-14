@@ -7,7 +7,7 @@
 #imports
 import math
 from microbit import uart,display,accelerometer,sleep,pin0,pin1,pin19,pin20,i2c,button_a,button_b,reset
-import time
+from time import ticks_ms
 #Author: shaoziyang
 #Date:   2018.2
 BMP280_I2C_ADDR = 0x76                                                                                          
@@ -93,15 +93,8 @@ class BMP280():
 		return (self.P)
 
 	# Calculating absolute altitude
-	def	getAltitude(self,Pressure):
-		return (44330*(1-(self.getPress()/Pressure)**(1/5.255)))
-        
- 	# get Pressure in Pa for ground level
-	def SLP(self):
-		self.get()
-		return self.P
-
-        
+	def	getAltitude(self,GL):
+		return (44330*(1-(self.getPress()/GL)**(1/5.255)))       
 
 	# sleep mode
 	def poweroff(self):
@@ -141,10 +134,12 @@ bmp280 = BMP280()
 #open UART
 uart.init(baudrate=9600, bits=8, parity=None, stop=1,tx=pin0,rx=pin1)
 #get start time
-now =time.ticks_ms()
+now = ticks_ms()
+#get Ground Level Pressure
+GL=bmp280.getPress()
 while True:
     #log data
-    timer= round( ((time.ticks_ms()-now)/1000),2)
+    timer= round( ((ticks_ms()-now)/1000),2)
     uart.write(str(timer))
     uart.write(",")
     uart.write(str(accelerometer.get_x()))#x
@@ -159,7 +154,8 @@ while True:
     pressure=bmp280.getPress()
     uart.write(str(pressure/100))#converted to Pa
     uart.write(",")
-    altitude=bmp280.getAltitude(pressure)
+    #call alltiude with GL to work out AGL altitude, round 2DP
+    altitude=round(bmp280.getAltitude(GL),2)
     uart.write(str(altitude))#in meters above start point
     uart.write(",")
     Ctemp=bmp280.getTemp()
