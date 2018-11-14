@@ -169,14 +169,18 @@ while True:
     sleep(15)
     #stop logging on button b
     if button_b.is_pressed():
+	#wait for 0.5 seconds to ensure last value is written befofe exit
         sleep(500)
         uart.init(baudrate=9600, bits=8, parity=None, stop=1,tx=None,rx=None)
         #Clear the screen
         display.clear()
         display.show("E")
-        #wait for 0.5 seconds to ensure last value is written befofe exit
-        break
+       
+        #break
+	sleep(2000)
+	#use reset to send back to main screen afer 2 seconds
+	reset()
         
     if button_a.is_pressed():
         sleep(200)
-         reset()
+        reset()
