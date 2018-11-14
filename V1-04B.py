@@ -183,4 +183,4 @@ while True:
         
     if button_a.is_pressed():
         sleep(200)
-         reset()
+        reset()
